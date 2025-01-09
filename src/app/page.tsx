@@ -7,9 +7,8 @@ type Movie = { id: number; name: string };
 
 export default function Home() {
   const [movies, setMovies] = useState<Movie[]>([]);
-  const [name, setName] = useState<string>(""); // For adding a new movie
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [editingName, setEditingName] = useState<string>(""); // For editing a movie
+  const [name, setName] = useState<string>("");
+  const [editingName, setEditingName] = useState<string>("");
 
   async function getMovies() {
     const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}`);
@@ -30,14 +29,14 @@ export default function Home() {
     });
     const data = await res.json();
     setMovies(data);
-    setName(""); // Clear input after adding
+    setName("");
   }
 
   async function deleteMovies(id: number) {
     await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/delete/${id}`, {
       method: "DELETE",
     });
-    getMovies(); // Refresh the movie list after deletion
+    getMovies();
   }
 
   async function updateMovies(id: number) {
@@ -55,12 +54,6 @@ export default function Home() {
       }
     );
     const data = await res.json();
-    if (Array.isArray(data.movies)) {
-      setMovies(data.movies);
-    } else {
-      console.error("Unexpected response format:", data);
-    }
-    setEditingId(null);
     setEditingName("");
   }
 
@@ -82,50 +75,31 @@ export default function Home() {
       >
         Add
       </button>
-
-      {/* Movie List Section */}
-      <div className="bg-white shadow-md p-6 rounded">
+      <div className="bg-white p-6 rounded">
         {movies.map((movie) => (
           <div
             key={movie.id}
             className="flex items-center justify-between mb-4"
           >
-            {editingId === movie.id ? (
-              <input
-                className="flex-1 p-2 border rounded mr-4"
-                value={editingName}
-                onChange={(e) => setEditingName(e.target.value)}
-              />
-            ) : (
-              <span className="text-lg font-medium">{movie.name}</span>
-            )}
+            <input
+              className="flex-1 p-2 border rounded mr-4"
+              defaultValue={movie.name}
+              onChange={(e) => setEditingName(e.target.value)}
+            />
 
             <div className="flex gap-2">
-              {editingId === movie.id ? (
-                <button
-                  className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-                  onClick={() => updateMovies(movie.id)}
-                >
-                  Save
-                </button>
-              ) : (
-                <button
-                  className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
-                  onClick={() => {
-                    setEditingId(movie.id);
-                    setEditingName(movie.name); // Set the editing name
-                  }}
-                >
-                  Edit
-                </button>
-              )}
               <button
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                className="bg-yellow-500 text-white px-4 py-2 rounded"
+                onClick={() => updateMovies(movie.id)}
+              >
+                Edit
+              </button>
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded"
                 onClick={() => deleteMovies(movie.id)}
               >
                 Delete
               </button>
-              ;
             </div>
           </div>
         ))}
