@@ -69,7 +69,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div>
+    <div className="text-black">
       <input
         className="flex-1 p-2 border rounded"
         placeholder="Enter movie name"
@@ -85,7 +85,6 @@ export default function Home() {
 
       {/* Movie List Section */}
       <div className="bg-white shadow-md p-6 rounded">
-        <h2 className="text-2xl font-semibold mb-4">Movie List</h2>
         {movies.map((movie) => (
           <div
             key={movie.id}
